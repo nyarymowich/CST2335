@@ -8,24 +8,26 @@
     android:orientation="vertical">
 
     <TextView
+        android:id="@+id/login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/login" />
 
     <EditText
+        android:id="@+id/login_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/login_name"
         android:inputType="textEmailAddress" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/password" />
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/password_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
@@ -37,4 +39,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/flag" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/loginB" />
 </LinearLayout>

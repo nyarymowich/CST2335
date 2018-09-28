@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AndroidLabs</string>
+    <string name="hello_message">Bonjour le monde!</string>
+    <string name="ButtonText">Je suis un bouton</string>
+    <string name="login">Se connecter s\'il vous plaît</string>
+    <string name="login_name">Se connecter s\'il vous plaît</string>
+    <string name="password">Mot de passe s\'il vous plait</string>
+    <string name="radioText">Un RadioButton</string>
+    <string name="checkText">Un CheckBox</string>
+    <string name="switchText">hein?</string>
+    <string name="loginB">s\'identifier</string>
+    <string name="dialog_message">Voulez-vous quitter?</string>
+    <string name="dialog_title">Quitter</string>
+    <string name="cancel">Annuler</string>
+    <string name="ok">D\'accord</string>
+</resources>
