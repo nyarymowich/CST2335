@@ -15,9 +15,14 @@ public class StartActivity extends Activity {
         Log.i(ACTIVITY_NAME, "In onCreate()");
         setContentView(R.layout.activity_start);
         Button button1 = findViewById(R.id.button);
+        Button chat = findViewById(R.id.chat);
         button1.setOnClickListener(click ->{
             Intent intent = new Intent(StartActivity.this, ListItemsActivity.class);
             startActivityForResult(intent,50);
+        });
+
+        chat.setOnClickListener(click ->{
+            Log.i(ACTIVITY_NAME, "User clicked Start Chat");
         });
     }
     @Override

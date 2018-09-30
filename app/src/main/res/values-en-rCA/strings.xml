@@ -14,4 +14,5 @@
     <string name="dialog_title">Quit?CAN</string>
     <string name="cancel">cancelCAN</string>
     <string name="ok">OKCAN</string>
+    <string name="chat">Start Chat</string>
 </resources>
