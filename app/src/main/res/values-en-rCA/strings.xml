@@ -10,9 +10,10 @@
     <string name="checkText">A CheckBox</string>
     <string name="switchText">Huh?</string>
     <string name="loginB">Login</string>
-    <string name="dialog_message">Do you want to quit?CAN</string>
-    <string name="dialog_title">Quit?CAN</string>
-    <string name="cancel">cancelCAN</string>
-    <string name="ok">OKCAN</string>
+    <string name="dialog_message">Do you want to quit?</string>
+    <string name="dialog_title">Quit?</string>
+    <string name="cancel">cancel</string>
+    <string name="ok">OK</string>
     <string name="chat">Start Chat</string>
+    <string name="send">Send</string>
 </resources>

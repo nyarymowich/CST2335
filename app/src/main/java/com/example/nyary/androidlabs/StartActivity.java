@@ -23,6 +23,8 @@ public class StartActivity extends Activity {
 
         chat.setOnClickListener(click ->{
             Log.i(ACTIVITY_NAME, "User clicked Start Chat");
+            Intent intent = new Intent(StartActivity.this, ChatWindow.class);
+            startActivity(intent);
         });
     }
     @Override

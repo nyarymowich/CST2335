@@ -48,6 +48,7 @@ public class ListItemsActivity extends Activity {
         });
         check1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+               if (isChecked == true){
                 AlertDialog.Builder builder = new AlertDialog.Builder(ListItemsActivity.this);
 // 2. Chain together various setter methods to set the dialog characteristics
                 builder.setMessage(R.string.dialog_message) //Add a dialog message to strings.xml
@@ -70,7 +71,7 @@ public class ListItemsActivity extends Activity {
                         })
                         .show();
 
-            }
+            }}
         });
     }
     private void dispatchTakePictureIntent() {

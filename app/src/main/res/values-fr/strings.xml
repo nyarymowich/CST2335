@@ -15,4 +15,5 @@
     <string name="cancel">Annuler</string>
     <string name="ok">D\'accord</string>
     <string name="chat">démarrer la discussion</string>
+    <string name="send">Envoyer</string>
 </resources>
