@@ -16,6 +16,7 @@ public class StartActivity extends Activity {
         setContentView(R.layout.activity_start);
         Button button1 = findViewById(R.id.button);
         Button chat = findViewById(R.id.chat);
+        Button weather =findViewById(R.id.weather);
         button1.setOnClickListener(click ->{
             Intent intent = new Intent(StartActivity.this, ListItemsActivity.class);
             startActivityForResult(intent,50);
@@ -24,6 +25,11 @@ public class StartActivity extends Activity {
         chat.setOnClickListener(click ->{
             Log.i(ACTIVITY_NAME, "User clicked Start Chat");
             Intent intent = new Intent(StartActivity.this, ChatWindow.class);
+            startActivity(intent);
+        });
+
+        weather.setOnClickListener(click ->{
+            Intent intent = new Intent(StartActivity.this, WeatherForecast.class);
             startActivity(intent);
         });
     }
