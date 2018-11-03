@@ -1,35 +1,45 @@
 package com.example.nyary.androidlabs;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Xml;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
 import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
 
-import java.io.IOException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
-import java.util.List;
+import java.security.PublicKey;
 
 public class WeatherForecast extends Activity {
+
+    protected static final String ACTIVITY_NAME = "WeatherForecast";
+    ForecastQuery query;
+    ProgressBar progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather_forecast);
-        ProgressBar progress = findViewById(R.id.progress);
+        progress = findViewById(R.id.progress);
 
-        ForecastQuery query = new ForecastQuery();
+        query = new ForecastQuery();
         query.execute();
 
 
@@ -41,71 +51,139 @@ public class WeatherForecast extends Activity {
         String min;
         String max;
         String wind;
+        String icon;
         Bitmap picture;
 
 
         @Override
         public String doInBackground(String... strings) {
-            URL url = null;
             try {
-                url = new URL("http://api.openweathermap.org/data/2.5/weather?q=ottawa,ca&APPID=d99666875e0e51521f0040a3d97d0f6a&mode=xml&units=metric");
+                //connect to Server:
+                URL url = new URL("http://api.openweathermap.org/data/2.5/weather?q=ottawa,ca&APPID=d99666875e0e51521f0040a3d97d0f6a&mode=xml&units=metric");
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                InputStream response = urlConnection.getInputStream();
 
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(10000 /* milliseconds */);
-                conn.setConnectTimeout(15000 /* milliseconds */);
-                conn.setRequestMethod("GET");
-                conn.setDoInput(true);
-                // Starts the query
-                conn.connect();
-                XmlPullParser parser = parse(conn.getInputStream());
-                getData(parser);
+                //Read the XML:
+                XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+                factory.setNamespaceAware(false);
+                XmlPullParser xpp = factory.newPullParser();
+                xpp.setInput( response  , "UTF-8");
 
 
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (ProtocolException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (XmlPullParserException e) {
-                e.printStackTrace();
+                while(xpp.getEventType() != XmlPullParser.END_DOCUMENT)
+                {
+                    switch(xpp.getEventType())
+                    {
+
+                        case XmlPullParser.START_TAG:
+                            String name = xpp.getName();
+
+                            if(name.equals("temperature"))
+                            {
+                                current = xpp.getAttributeValue(null, "value");
+                                publishProgress(20);
+                                min = xpp.getAttributeValue(null, "min");
+                                publishProgress(40);
+                                max = xpp.getAttributeValue(null, "max");
+                                publishProgress(60);
+                                Log.i(ACTIVITY_NAME,"value "+ current +" min " + min + " max " + max );
+                            }else if(name.equals("speed")){
+                                wind = xpp.getAttributeValue(null, "value");
+                                publishProgress(80);
+                            }else if(name.equals("weather")){
+                                icon = xpp.getAttributeValue(null, "icon");
+                            }
+                            Log.i("read XML tag:" , name);
+                            break;
+
+                        case XmlPullParser.TEXT:
+                            break;
+                    }
+
+                    xpp.next();//look at next XML tag
+                }
             }
-            return null;
+            catch(Exception e)
+            {
+                Log.i("Exception", e.getMessage());
+            }
+            if(fileExistance(query.icon + ".png") == false) {
+                try {
+                    picture = HttpUtils.getImage("http://openweathermap.org/img/w/" + query.icon + ".png");
+                    publishProgress(100);
+                    FileOutputStream outputStream = openFileOutput(icon + ".png", Context.MODE_PRIVATE);
+                    picture.compress(Bitmap.CompressFormat.PNG, 80, outputStream);
+                    outputStream.flush();
+                    outputStream.close();
+                    Log.i(ACTIVITY_NAME,"Downloading image");
+                } catch (Exception e) {
+                    Log.i("Exception", e.getMessage());
+                }
+            }else{
+                FileInputStream fis = null;
+                try {    fis = openFileInput(query.icon + ".png");   }
+                catch (FileNotFoundException e) {    e.printStackTrace();  }
+                picture = BitmapFactory.decodeStream(fis);
+                Log.i(ACTIVITY_NAME,"Getting image from file");
+
+            }
+            return "done";
+        }
+        public boolean fileExistance(String fname){
+            File file = getBaseContext().getFileStreamPath(fname);
+            return file.exists();   }
+        @Override
+        public void onProgressUpdate(Integer ... args)
+        {
+            progress.setVisibility(View.VISIBLE);
+            progress.setProgress(args[0]);
+
+        }
+        @Override
+        public void onPostExecute(String s){
+            TextView currentV = findViewById(R.id.current);
+            TextView minV = findViewById(R.id.min);
+            TextView maxV = findViewById(R.id.max);
+            TextView windV = findViewById(R.id.wind);
+            ImageView imageV =findViewById(R.id.image);
+            currentV.setText("Current: " + current + "°C");
+            minV.setText("Min: " + min +"°C");
+            maxV.setText("Max: " + max + "°C");
+            windV.setText("Wind: " + wind + " km/h");
+            imageV.setImageBitmap(picture);
+            progress.setVisibility(View.INVISIBLE);
+
         }
 
-        public XmlPullParser parse(InputStream in) throws XmlPullParserException, IOException {
+    }
+    static class HttpUtils {
+        public static Bitmap getImage(URL url) {
+            HttpURLConnection connection = null;
             try {
-                XmlPullParser parser = Xml.newPullParser();
-                parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
-                parser.setInput(in, null);
-                parser.nextTag();
-                return parser;
+                connection = (HttpURLConnection) url.openConnection();
+                connection.connect();
+                int responseCode = connection.getResponseCode();
+                if (responseCode == 200) {
+                    return BitmapFactory.decodeStream(connection.getInputStream());
+                } else
+                    return null;
+            } catch (Exception e) {
+                return null;
             } finally {
-                in.close();
+                if (connection != null) {
+                    connection.disconnect();
+                }
+            }
+        }
+        public static Bitmap getImage(String urlString) {
+            try {
+                URL url = new URL(urlString);
+                return getImage(url);
+            } catch (MalformedURLException e) {
+                return null;
             }
         }
 
-        public void getData(XmlPullParser parser) throws XmlPullParserException, IOException{
-            while (parser.next() != XmlPullParser.END_TAG) {
-                if (parser.getName().equals("temperature")) {
-                    current = parser.getAttributeValue(null,"value");
-                    min = parser.getAttributeValue(null,"min");
-                    max = parser.getAttributeValue(null,"max");
-                }
-                if(parser.getName().equals("wind")){
-                    wind = parser.getAttributeValue(null,"value");
-                }
-                parser.next();
-            }
-        }
-        public void onPostExecute(String result ){
-            TextView currentV= findViewById(R.id.current);
-            TextView minV= findViewById(R.id.min);
-            TextView maxV= findViewById(R.id.max);
-            currentV.setText(current);
-            minV.setText(min);
-            maxV.setText(max);
-        }
     }
 }
 
