@@ -115,7 +115,7 @@ public class WeatherForecast extends Activity {
                     picture.compress(Bitmap.CompressFormat.PNG, 80, outputStream);
                     outputStream.flush();
                     outputStream.close();
-                    Log.i(ACTIVITY_NAME,"Downloading image");
+                    Log.i(ACTIVITY_NAME,"Downloading image " + query.icon +".png");
                 } catch (Exception e) {
                     Log.i("Exception", e.getMessage());
                 }
@@ -124,7 +124,7 @@ public class WeatherForecast extends Activity {
                 try {    fis = openFileInput(query.icon + ".png");   }
                 catch (FileNotFoundException e) {    e.printStackTrace();  }
                 picture = BitmapFactory.decodeStream(fis);
-                Log.i(ACTIVITY_NAME,"Getting image from file");
+                Log.i(ACTIVITY_NAME,"Getting image from file "+ query.icon +".png");
 
             }
             return "done";
