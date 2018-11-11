@@ -25,11 +25,15 @@ public class ChatWindow extends Activity {
     ListView chat;
     ArrayList<String> log = new ArrayList<>();
     ChatDatabaseHelper dbHelp = new ChatDatabaseHelper(this);
+    Boolean tablet = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_window);
+        if (findViewById(R.id.frame)!=null){
+            tablet = true;
+        }
         send = findViewById(R.id.send);
         text = findViewById(R.id.text);
         chat = findViewById(R.id.chat);
