@@ -17,4 +17,5 @@
     <string name="chat">démarrer la discussion</string>
     <string name="send">Envoyer</string>
     <string name="weather">Prévisions météorologiques</string>
+    <string name="delete">Supprimer ce message</string>
 </resources>
