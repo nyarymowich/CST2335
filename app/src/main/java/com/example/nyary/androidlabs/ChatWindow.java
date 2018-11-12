@@ -1,8 +1,11 @@
 package com.example.nyary.androidlabs;
 
 import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -10,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,7 +29,9 @@ public class ChatWindow extends Activity {
     ListView chat;
     ArrayList<String> log = new ArrayList<>();
     ChatDatabaseHelper dbHelp = new ChatDatabaseHelper(this);
+    Cursor cursor;
     Boolean tablet = false;
+    SQLiteDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +45,8 @@ public class ChatWindow extends Activity {
         chat = findViewById(R.id.chat);
 
 
-        SQLiteDatabase db = dbHelp.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT " + ChatDatabaseHelper.KEY_MESSAGE +" FROM " + ChatDatabaseHelper.TABLE_NAME,null);
+        db = dbHelp.getWritableDatabase();
+        cursor = db.rawQuery("SELECT " + ChatDatabaseHelper.KEY_ID +"," + ChatDatabaseHelper.KEY_MESSAGE +" FROM " + ChatDatabaseHelper.TABLE_NAME,null);
 
         Log.i(ACTIVITY_NAME, "Cursor's column count =" + cursor.getColumnCount() );
 
@@ -48,14 +54,13 @@ public class ChatWindow extends Activity {
             Log.i(ACTIVITY_NAME, "Cursor's column name =" + cursor.getColumnName(i));
             cursor.moveToNext();
         }
-
+        cursor.moveToFirst();
         for(int i = 0; i < cursor.getCount(); i++) {
             Log.i(ACTIVITY_NAME, "SQL MESSAGE:" + cursor.getString(cursor.getColumnIndex(ChatDatabaseHelper.KEY_MESSAGE)));
             String s = cursor.getString(cursor.getColumnIndex(ChatDatabaseHelper.KEY_MESSAGE));
             log.add(s);
             cursor.moveToNext();
         }
-
             ChatAdapter messageAdapter =new ChatAdapter( this );
         chat.setAdapter (messageAdapter);
 
@@ -67,12 +72,36 @@ public class ChatWindow extends Activity {
             db.insert(ChatDatabaseHelper.TABLE_NAME,"NullColumnName",cv);
             messageAdapter.notifyDataSetChanged();
             text.setText("");
-        });
 
+        });
+        chat.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                TextView test = view.findViewById(R.id.message_text);
+                String test2 = (String) test.getText();
+                Log.i(ACTIVITY_NAME, test2);
+                Bundle bundle = new Bundle();
+                bundle.putString("message",test2);
+                if (tablet ==true){
+                    MessageFragment newFragment = new MessageFragment();
+                    FragmentManager fm = getFragmentManager();
+                    FragmentTransaction ftrans = fm.beginTransaction();
+                    ftrans.replace(R.id.frame,newFragment); //load a fragment into the framelayout
+                    ftrans.addToBackStack("name doesn't matter"); //changes the back button behaviour
+                    ftrans.commit(); //actually load it
+                }else{
+                    Intent intent = new Intent(ChatWindow.this, MessageDetails.class);
+                    startActivityForResult(intent,50);
+                }
+            }
+        });
     }
     protected void onDestroy(){
         dbHelp.close();
         super.onDestroy();
+    }
+    public void deleteMessage(long id){
+        db.delete("Log","Id=?",new String[]{Long.toString(id)});
     }
     private class ChatAdapter extends ArrayAdapter<String>{
         public ChatAdapter(Context ctx) {
@@ -88,7 +117,8 @@ public class ChatWindow extends Activity {
         }
        @Override
         public long getItemId(int pos){
-            return pos;
+           Log.i(ACTIVITY_NAME, String.valueOf(pos));
+           return pos;
        }
        @Override
         public View getView(int pos, View convertView, ViewGroup parent){

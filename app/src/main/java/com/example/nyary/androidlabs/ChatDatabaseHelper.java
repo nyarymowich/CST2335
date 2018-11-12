@@ -8,7 +8,7 @@ import android.util.Log;
 public class ChatDatabaseHelper extends SQLiteOpenHelper {
 
     static String DATABASE_NAME = "Messages.db";
-    static int VERSION_NUM = 4;
+    static int VERSION_NUM = 5;
     final static String KEY_ID = "Id";
     final static String KEY_MESSAGE = "Message";
     final static String TABLE_NAME = "Log";
