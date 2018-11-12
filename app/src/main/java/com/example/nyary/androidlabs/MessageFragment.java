@@ -3,6 +3,7 @@ package com.example.nyary.androidlabs;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -41,6 +42,9 @@ public class MessageFragment extends Fragment {
                FragmentTransaction ftrans = fm.beginTransaction();
                ftrans.remove(this);
                ftrans.commit(); //actually load it
+           }else{
+               Intent intent =new Intent();
+               intent.putExtra("id",messageID);
            }
         });
 
@@ -48,8 +52,9 @@ public class MessageFragment extends Fragment {
     }
     public void onAttach(Activity context) {
         super.onAttach(context);
-
-            parent = (ChatWindow)  context; //find out which activity has the fragment
+            if(tablet ==true) {
+                parent = (ChatWindow) context; //find out which activity has the fragment
+            }
 
 
     }

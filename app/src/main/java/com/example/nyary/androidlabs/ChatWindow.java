@@ -33,6 +33,7 @@ public class ChatWindow extends Activity {
     Boolean tablet = false;
     SQLiteDatabase db;
     ChatAdapter messageAdapter;
+    final int REQUEST_CODE =50;
 
 
 
@@ -103,7 +104,7 @@ public class ChatWindow extends Activity {
                 }else{
                     Intent intent = new Intent(ChatWindow.this, MessageDetails.class);
                     intent.putExtras(bundle);
-                    startActivity(intent);
+                    startActivityForResult(intent,REQUEST_CODE);
                 }
             }
         });
@@ -126,6 +127,10 @@ public class ChatWindow extends Activity {
         }
         messageAdapter =new ChatAdapter( this );
         chat.setAdapter (messageAdapter);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+
     }
 
     private class ChatAdapter extends ArrayAdapter<String>{
