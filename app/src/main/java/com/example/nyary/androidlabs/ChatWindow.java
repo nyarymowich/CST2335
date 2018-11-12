@@ -32,6 +32,9 @@ public class ChatWindow extends Activity {
     Cursor cursor;
     Boolean tablet = false;
     SQLiteDatabase db;
+    ChatAdapter messageAdapter;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +64,7 @@ public class ChatWindow extends Activity {
             log.add(s);
             cursor.moveToNext();
         }
-            ChatAdapter messageAdapter =new ChatAdapter( this );
+        messageAdapter =new ChatAdapter( this );
         chat.setAdapter (messageAdapter);
 
 
@@ -80,10 +83,17 @@ public class ChatWindow extends Activity {
                 TextView test = view.findViewById(R.id.message_text);
                 String test2 = (String) test.getText();
                 Log.i(ACTIVITY_NAME, test2);
+
+                long iD =messageAdapter.getItemId(position);
+                Log.i(ACTIVITY_NAME, Long.toString(iD));
+
                 Bundle bundle = new Bundle();
                 bundle.putString("message",test2);
+                bundle.putLong("id", iD);
+
                 if (tablet ==true){
                     MessageFragment newFragment = new MessageFragment();
+                    newFragment.setArguments(bundle);
                     FragmentManager fm = getFragmentManager();
                     FragmentTransaction ftrans = fm.beginTransaction();
                     ftrans.replace(R.id.frame,newFragment); //load a fragment into the framelayout
@@ -91,7 +101,8 @@ public class ChatWindow extends Activity {
                     ftrans.commit(); //actually load it
                 }else{
                     Intent intent = new Intent(ChatWindow.this, MessageDetails.class);
-                    startActivityForResult(intent,50);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
                 }
             }
         });
@@ -102,7 +113,20 @@ public class ChatWindow extends Activity {
     }
     public void deleteMessage(long id){
         db.delete("Log","Id=?",new String[]{Long.toString(id)});
+        cursor = db.rawQuery("SELECT " + ChatDatabaseHelper.KEY_ID +"," + ChatDatabaseHelper.KEY_MESSAGE +" FROM " + ChatDatabaseHelper.TABLE_NAME,null);
+        log.clear();
+        messageAdapter.notifyDataSetChanged();
+        cursor.moveToFirst();
+        for(int i = 0; i < cursor.getCount(); i++) {
+            Log.i(ACTIVITY_NAME, "SQL MESSAGE:" + cursor.getString(cursor.getColumnIndex(ChatDatabaseHelper.KEY_MESSAGE)));
+            String s = cursor.getString(cursor.getColumnIndex(ChatDatabaseHelper.KEY_MESSAGE));
+            log.add(s);
+            cursor.moveToNext();
+        }
+        messageAdapter =new ChatAdapter( this );
+        chat.setAdapter (messageAdapter);
     }
+
     private class ChatAdapter extends ArrayAdapter<String>{
         public ChatAdapter(Context ctx) {
             super(ctx, 0);
@@ -117,8 +141,9 @@ public class ChatWindow extends Activity {
         }
        @Override
         public long getItemId(int pos){
-           Log.i(ACTIVITY_NAME, String.valueOf(pos));
-           return pos;
+           cursor = db.rawQuery("SELECT " + ChatDatabaseHelper.KEY_ID +"," + ChatDatabaseHelper.KEY_MESSAGE +" FROM " + ChatDatabaseHelper.TABLE_NAME,null);
+           cursor.moveToPosition(pos);
+           return cursor.getLong(cursor.getColumnIndex("Id"));
        }
        @Override
         public View getView(int pos, View convertView, ViewGroup parent){
