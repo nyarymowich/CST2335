@@ -93,6 +93,7 @@ public class ChatWindow extends Activity {
 
                 if (tablet ==true){
                     MessageFragment newFragment = new MessageFragment();
+                    newFragment.tablet = true;
                     newFragment.setArguments(bundle);
                     FragmentManager fm = getFragmentManager();
                     FragmentTransaction ftrans = fm.beginTransaction();

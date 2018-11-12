@@ -15,6 +15,7 @@ public class MessageFragment extends Fragment {
 
     ChatWindow parent = null;
     long messageID;
+    boolean tablet = false;
 
     public MessageFragment(){
 
@@ -34,11 +35,13 @@ public class MessageFragment extends Fragment {
 
         Button delete = view.findViewById(R.id.delete);
         delete.setOnClickListener(e->{
-            parent.deleteMessage(messageID);
-            FragmentManager fm = getFragmentManager();
-            FragmentTransaction ftrans = fm.beginTransaction();
-            ftrans.remove(this);
-            ftrans.commit(); //actually load it
+           if(tablet ==true) {
+               parent.deleteMessage(messageID);
+               FragmentManager fm = getFragmentManager();
+               FragmentTransaction ftrans = fm.beginTransaction();
+               ftrans.remove(this);
+               ftrans.commit(); //actually load it
+           }
         });
 
         return view;
