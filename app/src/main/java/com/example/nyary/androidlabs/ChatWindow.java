@@ -33,7 +33,7 @@ public class ChatWindow extends Activity {
     Boolean tablet = false;
     SQLiteDatabase db;
     ChatAdapter messageAdapter;
-    final int REQUEST_CODE =50;
+    final int REQUEST_CODE =10;
 
 
 
@@ -130,7 +130,10 @@ public class ChatWindow extends Activity {
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
-
+        if (requestCode == REQUEST_CODE && resultCode == 20){
+            long id = data.getLongExtra("id",0);
+            this.deleteMessage(id);
+        }
     }
 
     private class ChatAdapter extends ArrayAdapter<String>{

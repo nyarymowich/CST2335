@@ -45,6 +45,8 @@ public class MessageFragment extends Fragment {
            }else{
                Intent intent =new Intent();
                intent.putExtra("id",messageID);
+               getActivity().setResult(20,intent);
+               getActivity().finish();
            }
         });
 
