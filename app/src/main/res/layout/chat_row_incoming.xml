@@ -11,7 +11,8 @@
         android:layout_height="wrap_content"
         android:text="TextView"
         android:layout_weight="1"
-        android:gravity="right"/>
+        android:gravity="right"
+        android:textSize="20sp"/>
 
     <ImageView
         android:id="@+id/imageView3"
